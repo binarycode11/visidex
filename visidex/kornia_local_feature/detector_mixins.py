@@ -5,7 +5,7 @@ from kornia.feature import (
 )
 from kornia.feature.keynet import KeyNetDetector
 from visidex.detection import REKD
-from visidex.utils import get_config_rekd,get_config_singular
+from visidex.utils import get_config_rekd,get_config_singular,load_model
 from visidex.detection import SingularPoints
 
 
@@ -61,7 +61,9 @@ class SingularPointDetectorMixin(BaseDetector):
             def __init__(self, args) -> None:
                 super().__init__()
                 self.model = SingularPoints(args).to(args.device)
-                load_model(self.model, args.load_dir, args.device)
+                # load_model(self.model, args.load_dir, args.device)
+                self.model.load_state_dict(torch.load(args.load_dir, map_location=args.device))
+                self.model.eval()
 
             def forward(self, x):
                 return self.model(x)[1]

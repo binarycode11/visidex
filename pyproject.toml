@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "visidex"
-version = "0.1.2"
+version = "0.1.9"
 description = "Keypoint detection and visual retrieval library for image identification."
 authors = ["Wagner Santos <wlsantos@cmb.gov.br>"]
 readme = "README.md"

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "visidex"
-version = "0.1.9"
+version = "0.1.10"
 description = "Keypoint detection and visual retrieval library for image identification."
 authors = ["Wagner Santos <wlsantos@cmb.gov.br>"]
 readme = "README.md"
@@ -17,6 +17,7 @@ torch = {version = "^2.1.0", source = "torch"}#2.7.0+cu118
 #torchaudio = {version = "^2.5.1+cu118", source = "torch"}
 kornia="^0.8.0"
 e2cnn="^0.2.3"
+requests="^2.32.3"
 
 [[tool.poetry.source]]
 name = "torch"

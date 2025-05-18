@@ -5,7 +5,7 @@ from kornia.feature import (
 )
 from kornia.feature.keynet import KeyNetDetector
 from visidex.detection import REKD
-from visidex.utils import get_config_rekd,get_config_singular,load_model
+from visidex.utils import get_config_rekd,get_config_singular,load_model,download_model
 from visidex.detection import SingularPoints
 
 
@@ -35,18 +35,24 @@ class REKDetectorMixin(BaseDetector):
 
     def initialize_detector(self, num_features: int, size_laf: int = 19) -> nn.Module:
         class REKDetector(nn.Module):
-            def __init__(self, args, device: torch.device) -> None:
+            def __init__(self, params, device: torch.device) -> None:
                 super().__init__()
-                self.model = REKD(args, device).to(device).eval()
-                self.model.load_state_dict(torch.load(args.load_dir, weights_only=False))
+                self.model = REKD(params, device).to(device).eval()
+
+                url = "https://github.com/binarycode11/visidex/blob/main/data/rekd_model.pt"
+                local_path = "./models/rekd-0.0.1.pt"
+                download_model(url, local_path)
+                self.model = load_model(self.model, local_path, map_location=device)
+                self.model.eval()
 
             def forward(self, x: Tensor) -> Tensor:
                 return self.model(x)[0]
 
         args = get_config_rekd(jupyter=True)
-        args.load_dir = 'trained_models/release_group36_f2_s2_t2.log/best_model.pt'
+        args.device = self.device
+
         return MultiResolutionDetector(
-            REKDetector(args, self.device),
+            REKDetector(args, args.device),
             num_features=num_features,
             config=self.config["Detector_conf"],
             ori_module=LAFOrienter(size_laf),
@@ -58,11 +64,14 @@ class SingularPointDetectorMixin(BaseDetector):
 
     def initialize_detector(self, num_features: int, size_laf: int = 19) -> nn.Module:
         class SingularPointDetector(nn.Module):
-            def __init__(self, args) -> None:
+            def __init__(self, params, device: torch.device) -> None:
                 super().__init__()
-                self.model = SingularPoints(args).to(args.device)
-                # load_model(self.model, args.load_dir, args.device)
-                self.model.load_state_dict(torch.load(args.load_dir, map_location=args.device))
+                self.model = SingularPoints(params).to(device)
+
+                url = "https://github.com/binarycode11/visidex/blob/main/data/sp_map_fo_30.pth" # './data/models/sp2_85.pth'
+                local_path = "./models/singular-0.0.1.pth"
+                download_model(url, local_path)
+                self.model= load_model(self.model, local_path, map_location=device)
                 self.model.eval()
 
             def forward(self, x):
@@ -70,11 +79,9 @@ class SingularPointDetectorMixin(BaseDetector):
 
         args = get_config_singular(jupyter=True)
         args.num_channels = 1
-        args.load_dir = './data/models/sp_map_fo_30.pth'
-        # args.load_dir = './data/models/sp2_85.pth'
         args.device = self.device
         return MultiResolutionDetector(
-            SingularPointDetector(args),
+            SingularPointDetector(args, args.device),
             num_features=num_features,
             config=self.config["Detector_conf"],
             ori_module=LAFOrienter(size_laf),

@@ -18,7 +18,7 @@ parser.add_argument("--box_size", required=False, default=21, type=int)
 parser.add_argument("--nms_size", required=False, default=10, type=int)
 parser.add_argument("--img_size", required=False, default=250, type=int)
 parser.add_argument("--batch_size", required=False, default=5, type=int)
-parser.add_argument('--path_data', required=False, default='./data', type=str)
+parser.add_argument('--path_data', required=False, default='./model', type=str)
 parser.add_argument('--path_model', required=False, default='model.pt', type=str)
 parser.add_argument('--is_loss_ssim', required=False, default=True, type=bool)
 parser.add_argument('--margin_loss', required=False, default=2.0, type=float)
@@ -50,7 +50,7 @@ def get_config_rekd(jupyter=False):
     ## basic configuration
     parser.add_argument('--data_dir', type=str, default='../ImageNet2012/ILSVRC2012_img_val',
                         # default='path-to-ImageNet',
-                        help='The root path to the data from which the synthetic dataset will be created.')
+                        help='The root path to the model from which the synthetic dataset will be created.')
     parser.add_argument('--synth_dir', type=str, default='',
                         help='The path to save the generated sythetic image pairs.')
     parser.add_argument('--log_dir', type=str, default='trained_models/weights',
@@ -141,7 +141,7 @@ def get_config_singular(jupyter=False):
     # Configurações gerais
     general_group = parser.add_argument_group("Configurações Gerais")
     general_group.add_argument('--exported', default=False, type=bool, help="Indica se o modelo foi exportado.")
-    general_group.add_argument('--path_data', default='./data', type=str, help="Caminho para os dados.")
+    general_group.add_argument('--path_data', default='./model', type=str, help="Caminho para os dados.")
     general_group.add_argument('--path_model', default='model.pt', type=str, help="Caminho para salvar o modelo.")
 
     # Hiperparâmetros do modelo

@@ -39,7 +39,7 @@ class REKDetectorMixin(BaseDetector):
                 super().__init__()
                 self.model = REKD(params, device).to(device).eval()
 
-                url = "https://github.com/binarycode11/visidex/blob/main/data/rekd_model.pt"
+                url = "https://github.com/binarycode11/visidex/blob/main/data/model/rekd_model.pt"
                 local_path = "./models/rekd-0.0.1.pt"
                 download_model(url, local_path)
                 self.model = load_model(self.model, local_path, map_location=device)
@@ -68,7 +68,7 @@ class SingularPointDetectorMixin(BaseDetector):
                 super().__init__()
                 self.model = SingularPoints(params).to(device)
 
-                url = "https://github.com/binarycode11/visidex/blob/main/data/sp_map_fo_30.pth" # './data/models/sp2_85.pth'
+                url = "https://github.com/binarycode11/visidex/blob/main/data/model/sp_map_fo_30.pth" # './model/models/sp2_85.pth'
                 local_path = "./models/singular-0.0.1.pth"
                 download_model(url, local_path)
                 self.model= load_model(self.model, local_path, map_location=device)

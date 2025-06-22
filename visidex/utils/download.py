@@ -1,33 +1,30 @@
 import os
 import urllib
 from typing import Optional
-
 import torch
-
-import os
-import torch
+import zipfile
 import requests
 
 
-def download_model(url: str, local_path: str) -> None:
+def download_file(url: str, local_path: str) -> None:
     """
-    Download a model file from a given URL if it doesn't already exist locally.
+    Download an artifact file from a given URL if it doesn't already exist locally.
 
     Args:
-        url (str): URL to download the model from.
-        local_path (str): Local path to save the model file.
+        url (str): URL to download the artifact from.
+        local_path (str): Local path to save the artifact file.
     """
     os.makedirs(os.path.dirname(local_path), exist_ok=True)
 
     if not os.path.exists(local_path):
-        print(f"Downloading model from {url} ...")
+        print(f"Downloading artifact from {url} ...")
         response = requests.get(url)
         response.raise_for_status()
         with open(local_path, 'wb') as f:
             f.write(response.content)
-        print(f"Model downloaded and saved to {local_path}")
+        print(f"artifact downloaded and saved to {local_path}")
     else:
-        print(f"Model already exists at {local_path}. Skipping download.")
+        print(f"artifact already exists at {local_path}. Skipping download.")
 
 
 def load_model(model: torch.nn.Module, model_path: str, map_location='cpu') -> Optional[torch.nn.Module]:
@@ -39,13 +36,32 @@ def load_model(model: torch.nn.Module, model_path: str, map_location='cpu') -> O
     print("Model loaded successfully.")
     return model
 
+def extract_zip(zip_path: str, extract_to: str = None):
+    """
+    Extracts a .zip file to a specified directory.
 
-if __name__ == "__main__":
-    url = "https://github.com/binarycode11/singular-points/raw/refs/heads/main/data/models/sp_map_fo_30.pth"
-    local_path = "./models/singular-0.0.1.pth"
+    Args:
+        zip_path (str): Path to the .zip file.
+        extract_to (str, optional): Directory to extract contents to.
+                                    Defaults to same directory as zip file.
+    """
+    if extract_to is None:
+        extract_to = os.path.splitext(zip_path)[0]  # same name, no .zip
 
-    download_model(url, local_path)
+    os.makedirs(extract_to, exist_ok=True)
 
-    # Exemplo: carregando em um modelo fictício
-    # model = MyModel()
-    # model = load_model(model, local_path)
+    print(f"Extracting {zip_path} to {extract_to} ...")
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to)
+    print("Extraction complete.")
+
+# if __name__ == '__main__':
+#     url ="https://github.com/binarycode11/visidex/raw/refs/heads/main/data/dataset/fibers.zip"
+#     local_path ="./tests/fibers.zip"
+#     download_file(url,local_path)
+#     extract_zip(local_path,"./tests/")
+#
+#     url ="https://github.com/binarycode11/visidex/raw/refs/heads/main/data/dataset/wood_dataset.zip"
+#     local_path ="./tests/wood_dataset.zip"
+#     download_file(url,local_path)
+#     extract_zip(local_path,"./tests/")
